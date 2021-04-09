@@ -8,6 +8,7 @@ use Flowframe\ShoppingCart\Managers\FeeManager;
 use Flowframe\ShoppingCart\Managers\ItemManager;
 use Flowframe\ShoppingCart\Models\Fee;
 use Flowframe\ShoppingCart\Models\Item;
+use Illuminate\Support\Str;
 
 class ShoppingCart
 {
@@ -65,5 +66,23 @@ class ShoppingCart
         }
 
         return $total;
+    }
+
+    /**
+     * Allows for magic like `cart()->incrementItem(id: 1, byAmount: 2)`
+     */
+    public function __call($name, $arguments)
+    {
+        $sections = Str::of($name)
+            ->kebab()
+            ->explode('-');
+
+        $action = $sections[0];
+
+        $manager = Str::plural($sections[1]);
+
+        $className = get_class($this);
+
+        call_user_func("{$className}::{$manager}")->{$action}(...$arguments);
     }
 }

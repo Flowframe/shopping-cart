@@ -29,6 +29,9 @@
         "vimeo/psalm": "^4.4"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
             "Flowframe\\ShoppingCart\\": "src"
         }
@@ -50,10 +53,7 @@
         "laravel": {
             "providers": [
                 "Flowframe\\ShoppingCart\\ShoppingCartServiceProvider"
-            ],
-            "aliases": {
-                "ShoppingCart": "Flowframe\\ShoppingCart\\ShoppingCartFacade"
-            }
+            ]
         }
     },
     "minimum-stability": "dev",
