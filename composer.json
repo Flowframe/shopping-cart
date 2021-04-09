@@ -1,0 +1,61 @@
+{
+    "name": "flowframe/shopping-cart",
+    "description": "Fluent Shopping Cart for Laravel",
+    "keywords": [
+        "Flowframe",
+        "laravel",
+        "shopping-cart"
+    ],
+    "homepage": "https://github.com/flowframe/shopping-cart",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lars Klopstra",
+            "email": "lars@flowframe.nl",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "spatie/laravel-package-tools": "^1.4.3",
+        "illuminate/contracts": "^8.0"
+    },
+    "require-dev": {
+        "brianium/paratest": "^6.2",
+        "nunomaduro/collision": "^5.3",
+        "orchestra/testbench": "^6.15",
+        "phpunit/phpunit": "^9.3",
+        "spatie/laravel-ray": "^1.9",
+        "vimeo/psalm": "^4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Flowframe\\ShoppingCart\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Flowframe\\ShoppingCart\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "psalm": "vendor/bin/psalm",
+        "test": "./vendor/bin/testbench package:test --parallel --no-coverage",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Flowframe\\ShoppingCart\\ShoppingCartServiceProvider"
+            ],
+            "aliases": {
+                "ShoppingCart": "Flowframe\\ShoppingCart\\ShoppingCartFacade"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
