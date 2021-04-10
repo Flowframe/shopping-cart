@@ -18,7 +18,7 @@ class CouponManager extends AbstractManager
             ? Coupon::fromArray($coupon)
             : $coupon;
 
-        $this->updateSession($this->all()->add($coupon));
+        $this->updateSession($this->get()->add($coupon));
 
         return $this;
     }

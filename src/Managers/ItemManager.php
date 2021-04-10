@@ -23,14 +23,14 @@ class ItemManager extends AbstractManager
 
         $existingItem
             ? $this->increment($item->id)
-            : $this->updateSession($this->all()->add($item));
+            : $this->updateSession($this->get()->add($item));
 
         return $this;
     }
 
     public function increment(int | string $id, int $byAmount = 1): void
     {
-        /** @var Item $item */
+        /** @var ?Item $item */
         $item = $this->find($id);
 
         if (is_null($item)) {
@@ -42,7 +42,7 @@ class ItemManager extends AbstractManager
 
     public function decrement(int | string $id, int $byAmount = 1): void
     {
-        /** @var Item $item */
+        /** @var ?Item $item */
         $item = $this->find($id);
 
         if (is_null($item)) {
@@ -61,7 +61,7 @@ class ItemManager extends AbstractManager
     public function count(): int
     {
         return $this
-            ->all()
+            ->get()
             ->sum('quantity');
     }
 }

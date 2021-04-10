@@ -22,14 +22,14 @@ class ItemManagerTest extends TestCase
         $this->assertEquals(
             $item,
             ShoppingCart::items()
-                ->all()
+                ->get()
                 ->first()
         );
 
         $this->assertEquals(
             $item->quantity,
             ShoppingCart::items()
-                ->all()
+                ->get()
                 ->first()
                 ->quantity
         );
@@ -57,7 +57,7 @@ class ItemManagerTest extends TestCase
         $this->assertEquals(
             2,
             ShoppingCart::items()
-                ->all()
+                ->get()
                 ->first()
                 ->quantity
         );
@@ -92,7 +92,7 @@ class ItemManagerTest extends TestCase
         $this->assertEquals(
             $itemOne->quantity,
             ShoppingCart::items()
-                ->all()
+                ->get()
                 ->first()
                 ->quantity
         );
@@ -113,7 +113,7 @@ class ItemManagerTest extends TestCase
         $this->assertEquals(
             $item,
             ShoppingCart::items()
-                ->all()
+                ->get()
                 ->first()
         );
 
@@ -139,7 +139,7 @@ class ItemManagerTest extends TestCase
         $this->assertEquals(
             2,
             ShoppingCart::items()
-                ->all()
+                ->get()
                 ->first()
                 ->quantity
         );
@@ -149,7 +149,7 @@ class ItemManagerTest extends TestCase
         $this->assertEquals(
             1,
             ShoppingCart::items()
-                ->all()
+                ->get()
                 ->first()
                 ->quantity
         );

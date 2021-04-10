@@ -12,7 +12,7 @@ abstract class AbstractManager
 
     abstract public function add(AbstractItem | array $item): self;
 
-    public function all(): Collection
+    public function get(): Collection
     {
         return $this
             ->items()
@@ -22,14 +22,14 @@ abstract class AbstractManager
     public function count(): int
     {
         return $this
-            ->all()
+            ->get()
             ->count();
     }
 
     public function find(int | string $id): ?AbstractItem
     {
         return $this
-            ->all()
+            ->get()
             ->firstWhere('id', $id);
     }
 
@@ -45,7 +45,7 @@ abstract class AbstractManager
         }
 
         $items = $this
-            ->all()
+            ->get()
             ->filter(fn (Item $item) => $item->id !== $id);
 
         $this->updateSession($items);
@@ -54,7 +54,7 @@ abstract class AbstractManager
     public function update(AbstractItem $updatedItem): void
     {
         $items = $this
-            ->all()
+            ->get()
             ->map(
                 fn (AbstractItem $item) => $item->id === $updatedItem->id
                     ? $updatedItem
@@ -62,6 +62,11 @@ abstract class AbstractManager
             );
 
         $this->updateSession($items);
+    }
+
+    public function empty(): void
+    {
+        session(['shopping_cart' => $this->allExceptForThis()]);
     }
 
     protected function items(): Collection

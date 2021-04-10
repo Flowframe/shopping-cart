@@ -18,7 +18,7 @@ class FeeManager extends AbstractManager
             ? Fee::fromArray($fee)
             : $fee;
 
-        $this->updateSession($this->all()->add($fee));
+        $this->updateSession($this->get()->add($fee));
 
         return $this;
     }

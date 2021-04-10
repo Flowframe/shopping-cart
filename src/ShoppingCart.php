@@ -30,7 +30,7 @@ class ShoppingCart
     public static function subtotal(bool $withVat = true): float
     {
         return static::items()
-            ->all()
+            ->get()
             ->map(fn (Item $item) => $item->total($withVat))
             ->sum();
     }
@@ -42,14 +42,9 @@ class ShoppingCart
     ): float {
         $total = static::subtotal($withVat);
 
-        $fees = static::fees()
-            ->all()
-            ->map(fn (Fee $fee) => $fee->total($withVat))
-            ->sum();
-
         if ($withCoupons) {
             $coupons = static::coupons()
-                ->all()
+                ->get()
                 ->toArray();
 
             foreach ($coupons as $coupon) {
@@ -62,16 +57,26 @@ class ShoppingCart
         }
 
         if ($withFees) {
+            $fees = static::fees()
+                ->get()
+                ->map(fn (Fee $fee) => $fee->total($withVat))
+                ->sum();
+
             $total += $fees;
         }
 
         return $total;
     }
 
+    public function empty(): void
+    {
+        session()->forget('shopping_cart');
+    }
+
     /**
      * Allows for magic like `cart()->incrementItem(id: 1, byAmount: 2)`
      */
-    public function __call($name, $arguments)
+    public function __call(mixed $name, mixed $arguments)
     {
         $sections = Str::of($name)
             ->kebab()
