@@ -77,7 +77,6 @@ class Item extends AbstractItem implements Contracts\Taxable
             return $this;
         }
 
-
         $this->coupons[$coupon->id] = $coupon;
 
         return $this;
