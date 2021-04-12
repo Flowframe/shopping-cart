@@ -2,10 +2,11 @@
 
 namespace Flowframe\ShoppingCart\Managers;
 
+use Flowframe\ShoppingCart\Managers\Contracts\ManagesVat;
 use Flowframe\ShoppingCart\Models\AbstractItem;
 use Flowframe\ShoppingCart\Models\Item;
 
-class ItemManager extends AbstractManager
+class ItemManager extends AbstractManager implements ManagesVat
 {
     protected function itemClass(): string
     {
@@ -16,7 +17,7 @@ class ItemManager extends AbstractManager
     {
         /** @var Item $item */
         $item = is_array($item)
-            ? Item::fromArray($item)
+            ? new Item(...$item)
             : $item;
 
         $existingItem = $this->find($item->id);
@@ -63,5 +64,21 @@ class ItemManager extends AbstractManager
         return $this
             ->get()
             ->sum('quantity');
+    }
+
+    public function vat(): float
+    {
+        return $this
+            ->get()
+            ->map(fn (Item $item) => $item->vat())
+            ->sum();
+    }
+
+    public function total(bool $withVat = true, bool $withCoupons = true): float
+    {
+        return $this
+            ->get()
+            ->map(fn (Item $item) => $item->total($withVat, $withCoupons))
+            ->sum();
     }
 }

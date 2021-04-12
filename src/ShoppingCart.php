@@ -2,12 +2,10 @@
 
 namespace Flowframe\ShoppingCart;
 
-use Flowframe\ShoppingCart\Enums\CouponType;
 use Flowframe\ShoppingCart\Managers\CouponManager;
 use Flowframe\ShoppingCart\Managers\FeeManager;
 use Flowframe\ShoppingCart\Managers\ItemManager;
 use Flowframe\ShoppingCart\Models\Fee;
-use Flowframe\ShoppingCart\Models\Item;
 use Illuminate\Support\Str;
 
 class ShoppingCart
@@ -29,10 +27,15 @@ class ShoppingCart
 
     public static function subtotal(bool $withVat = true): float
     {
-        return static::items()
-            ->get()
-            ->map(fn (Item $item) => $item->total($withVat))
-            ->sum();
+        return static::items()->total(
+            withVat: $withVat,
+            withCoupons: false,
+        );
+    }
+
+    public function empty(): void
+    {
+        session()->forget('shopping_cart');
     }
 
     public static function total(
@@ -40,7 +43,7 @@ class ShoppingCart
         bool $withFees = true,
         bool $withCoupons = true,
     ): float {
-        $total = static::subtotal($withVat);
+        $items = static::items()->get();
 
         if ($withCoupons) {
             $coupons = static::coupons()
@@ -48,13 +51,13 @@ class ShoppingCart
                 ->toArray();
 
             foreach ($coupons as $coupon) {
-                $total = match ($coupon->type) {
-                    CouponType::PERCENTAGE => $total * $coupon->valuePercentage(),
-                    CouponType::FIXED => $total - $coupon->value,
-                    default => $total
-                };
+                foreach ($items as $item) {
+                    $item->applyCoupon($coupon);
+                }
             }
         }
+
+        $total = static::items()->total($withVat, $withCoupons);
 
         if ($withFees) {
             $fees = static::fees()
@@ -66,11 +69,6 @@ class ShoppingCart
         }
 
         return $total;
-    }
-
-    public function empty(): void
-    {
-        session()->forget('shopping_cart');
     }
 
     /**

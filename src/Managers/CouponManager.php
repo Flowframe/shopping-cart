@@ -14,9 +14,14 @@ class CouponManager extends AbstractManager
 
     public function add(AbstractItem | array $coupon): self
     {
+        /** @var Coupon $coupon */
         $coupon = is_array($coupon)
-            ? Coupon::fromArray($coupon)
+            ? new Coupon(...$coupon)
             : $coupon;
+
+        if ($this->has($coupon->id)) {
+            return $this;
+        }
 
         $this->updateSession($this->get()->add($coupon));
 

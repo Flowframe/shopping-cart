@@ -2,6 +2,8 @@
 
 namespace Flowframe\ShoppingCart\Models;
 
+use Flowframe\ShoppingCart\Enums\CouponType;
+
 class Item extends AbstractItem implements Contracts\Taxable
 {
     public function __construct(
@@ -11,19 +13,8 @@ class Item extends AbstractItem implements Contracts\Taxable
         public float $vat,
         public int $quantity = 1,
         public array $options = [],
+        public array $coupons = [],
     ) {
-    }
-
-    public static function fromArray(array $item = []): self
-    {
-        return new static(
-            id: $item['id'],
-            name: $item['name'],
-            price: $item['price'],
-            vat: $item['vat'],
-            quantity: $item['quantity'],
-            options: $item['options'],
-        );
     }
 
     public function incrementQuantity(int $byAmount = 1): self
@@ -40,18 +31,50 @@ class Item extends AbstractItem implements Contracts\Taxable
         return $this;
     }
 
-    public function vat(): float
+    public function vatDecimal(): float
     {
-        return ($this->price * $this->quantity) * ($this->vat / 100);
+        return ($this->vat / 100) + 1;
     }
 
-    public function total($withVat = true): float
+    public function vat(): float
     {
-        $priceWithVat = $this->price * $this->quantity;
-        $priceWithoutVat = $priceWithVat - $this->vat();
+        return $this->totalWithVat() - $this->totalWithoutVat();
+    }
+
+    public function totalWithVat(): float
+    {
+        return $this->totalWithoutVat() * $this->vatDecimal();
+    }
+
+    public function totalWithoutVat(): float
+    {
+        return $this->price * $this->quantity;
+    }
+
+    public function total(bool $withVat = true, bool $withCoupons = true): float
+    {
+        $totalWithoutVat = $this->totalWithoutVat();
+
+        if ($withCoupons) {
+            /** @var Coupon $coupon */
+            foreach ($this->coupons as $coupon) {
+                $totalWithoutVat = match ($coupon->type) {
+                    CouponType::PERCENTAGE => $totalWithoutVat * $coupon->valueDecimal(),
+                    CouponType::FIXED => $totalWithoutVat - $coupon->value,
+                    default => $totalWithoutVat
+                };
+            }
+        }
 
         return $withVat
-            ? $priceWithVat
-            : $priceWithoutVat;
+            ? $totalWithoutVat * $this->vatDecimal()
+            : $totalWithoutVat;
+    }
+
+    public function applyCoupon(Coupon $coupon): self
+    {
+        $this->coupons[] = $coupon;
+
+        return $this;
     }
 }

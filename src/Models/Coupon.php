@@ -2,6 +2,9 @@
 
 namespace Flowframe\ShoppingCart\Models;
 
+use Flowframe\ShoppingCart\Enums\CouponType;
+use Flowframe\ShoppingCart\Exceptions\ValueDecimalMethodNotCallable;
+
 class Coupon extends AbstractItem
 {
     public function __construct(
@@ -13,19 +16,12 @@ class Coupon extends AbstractItem
     ) {
     }
 
-    public static function fromArray(array $item = []): self
+    public function valueDecimal(): float
     {
-        return new static(
-            id: $item['id'],
-            name: $item['name'],
-            type: $item['type'],
-            value: $item['value'],
-            options: $item['options'],
-        );
-    }
+        if ($this->type === CouponType::FIXED) {
+            throw ValueDecimalMethodNotCallable::becauseTypeShouldBePercentage();
+        }
 
-    public function valuePercentage(): float
-    {
         return (100 - $this->value) / 100;
     }
 }

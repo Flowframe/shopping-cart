@@ -13,26 +13,30 @@ class Fee extends AbstractItem implements Contracts\Taxable
     ) {
     }
 
-    public static function fromArray(array $item): self
+    public function vatDecimal(): float
     {
-        return new static(
-            id: $item['id'],
-            name: $item['name'],
-            price: $item['price'],
-            vat: $item['vat'],
-            options: $item['options'],
-        );
+        return ($this->vat / 100) + 1;
     }
 
     public function vat(): float
     {
-        return $this->price * ($this->vat / 100);
+        return $this->totalWithVat() - $this->totalWithoutVat();
     }
 
-    public function total($withVat = true): float
+    public function totalWithVat(): float
+    {
+        return $this->totalWithoutVat() * $this->vatDecimal();
+    }
+
+    public function totalWithoutVat(): float
+    {
+        return $this->price;
+    }
+
+    public function total(bool $withVat = true): float
     {
         return $withVat
-            ? $this->price
-            : $this->price - $this->vat();
+            ? $this->totalWithVat()
+            : $this->totalWithoutVat();
     }
 }
