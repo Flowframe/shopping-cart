@@ -3,7 +3,6 @@
 namespace Flowframe\ShoppingCart\Managers;
 
 use Flowframe\ShoppingCart\Models\AbstractItem;
-use Flowframe\ShoppingCart\Models\Item;
 use Illuminate\Support\Collection;
 
 abstract class AbstractManager
@@ -46,7 +45,7 @@ abstract class AbstractManager
 
         $items = $this
             ->get()
-            ->filter(fn (Item $item) => $item->id !== $id);
+            ->filter(fn (AbstractItem $item) => $item->id !== $id);
 
         $this->updateSession($items);
     }
