@@ -4,8 +4,6 @@ namespace Flowframe\ShoppingCart\Tests\Features;
 
 use Flowframe\ShoppingCart\Tests\TestCase;
 
-use function Amp\Promise\first;
-
 class ShoppingCartTest extends TestCase
 {
     /** @test */
