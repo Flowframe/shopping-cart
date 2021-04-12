@@ -6,6 +6,7 @@ use Flowframe\ShoppingCart\Managers\CouponManager;
 use Flowframe\ShoppingCart\Managers\FeeManager;
 use Flowframe\ShoppingCart\Managers\ItemManager;
 use Flowframe\ShoppingCart\Models\Fee;
+use Flowframe\ShoppingCart\Models\Item;
 use Illuminate\Support\Str;
 
 class ShoppingCart
@@ -51,6 +52,7 @@ class ShoppingCart
                 ->toArray();
 
             foreach ($coupons as $coupon) {
+                /** @var Item $item */
                 foreach ($items as $item) {
                     $item->applyCoupon($coupon);
                 }

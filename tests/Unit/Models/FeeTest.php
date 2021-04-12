@@ -1,34 +1,55 @@
 <?php
 
+namespace Flowframe\ShoppingCart\Tests\Unit\Models;
+
 use Flowframe\ShoppingCart\Models\Fee;
+use Flowframe\ShoppingCart\Tests\TestCase;
 
-beforeEach(function () {
-    $this->fee = new Fee(
-        id: 'shipping',
-        name: 'Shipping',
-        price: 5.00,
-        vat: 21,
-    );
-});
+class FeeTest extends TestCase
+{
+    public Fee $fee;
 
-it('can calculate the vat decimal', function () {
-    expect($this->fee->vatDecimal())->toBe(1.21);
-});
+    public function setUp(): void
+    {
+        parent::setUp();
 
-it('can calculate the vat', function () {
-    expect($this->fee->vat())->toBe(1.05);
-});
+        $this->fee = new Fee(
+            id: 'shipping',
+            name: 'Shipping',
+            price: 5.00,
+            vat: 21,
+        );
+    }
 
-it('can calculate the total with vat', function () {
-    expect($this->fee->totalWithVat())->toBe(6.05);
-});
+    /** @test */
+    public function it_can_calculate_vat_decimal(): void
+    {
+        $this->assertEquals(1.21, $this->fee->vatDecimal());
+    }
 
-it('can calculate the total without vat', function () {
-    expect($this->fee->totalWithoutVat())->toBe(5.00);
-});
+    /** @test */
+    public function it_can_calculate_vat(): void
+    {
+        $this->assertEquals(1.05, $this->fee->vat());
+    }
 
-it('can calculate the total', function () {
-    expect($this->fee->total(withVat: true))->toBe(6.05);
+    /** @test */
+    public function it_can_calculate_total_with_vat(): void
+    {
+        $this->assertEquals(6.05, $this->fee->totalWithVat());
+    }
 
-    expect($this->fee->total(withVat: false))->toBe(5.00);
-});
+    /** @test */
+    public function it_can_calculate_total_without_vat(): void
+    {
+        $this->assertEquals(5.00, $this->fee->totalWithoutVat());
+    }
+
+    /** @test */
+    public function it_can_calculate_total(): void
+    {
+        $this->assertEquals(6.05, $this->fee->total(withVat: true));
+
+        $this->assertEquals(5.00, $this->fee->total(withVat: false));
+    }
+}

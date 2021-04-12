@@ -1,106 +1,131 @@
 <?php
 
+namespace Flowframe\ShoppingCart\Tests\Unit\Models;
+
 use Flowframe\ShoppingCart\Enums\CouponType;
 use Flowframe\ShoppingCart\Models\Coupon;
 use Flowframe\ShoppingCart\Models\Item;
+use Flowframe\ShoppingCart\Tests\TestCase;
 
-beforeEach(function () {
-    $this->item = new Item(
-        id: 'laravel-hambino-baseball-cap',
-        name: 'LARAVEL "HAMBINO" BASEBALL CAP',
-        price: 24.99,
-        vat: 21,
-        quantity: 2,
-    );
-});
+class ItemTest extends TestCase
+{
+    public Item $item;
 
-it('can increment', function () {
-    $this->item->incrementQuantity();
+    public function setUp(): void
+    {
+        parent::setUp();
 
-    expect($this->item->quantity)->toBe(3);
-});
+        $this->item = new Item(
+            id: 'laravel-hambino-baseball-cap',
+            name: 'LARAVEL "HAMBINO" BASEBALL CAP',
+            price: 24.99,
+            vat: 21,
+            quantity: 2,
+        );
+    }
 
-it('can decrement', function () {
-    $this->item->decrementQuantity();
+    /** @test */
+    public function it_can_increment(): void
+    {
+        $this->item->incrementQuantity();
 
-    expect($this->item->quantity)->toBe(1);
-});
+        $this->assertEquals(3, $this->item->quantity);
+    }
 
-it('can be created from array', function () {
-    $itemFromArray = new Item(...[
-        'id' => 'laravel-hambino-baseball-cap',
-        'name' => 'LARAVEL "HAMBINO" BASEBALL CAP',
-        'price' => 24.99,
-        'vat' => 21,
-        'quantity' => 2,
-    ]);
+    /** @test */
+    public function it_can_decrement(): void
+    {
+        $this->item->decrementQuantity();
 
-    expect($this->item)->toEqual($itemFromArray);
-});
+        $this->assertEquals(1, $this->item->quantity);
+    }
 
-it('can calculate the vat percentage as decimal', function () {
-    expect($this->item->vatDecimal())->toBe(1.21);
-});
+    /** @test */
+    public function it_can_be_created_from_array(): void
+    {
+        $itemFromArray = new Item(...[
+            'id' => 'laravel-hambino-baseball-cap',
+            'name' => 'LARAVEL "HAMBINO" BASEBALL CAP',
+            'price' => 24.99,
+            'vat' => 21,
+            'quantity' => 2,
+        ]);
 
-it('can calculate the price without vat', function () {
-    // 24.99 * 2 = 49.98
-    expect($this->item->totalWithoutVat())->toBe(49.98);
-});
+        $this->assertEquals($this->item, $itemFromArray);
+    }
 
-it('can calculate the price with vat', function () {
-    // 24.99 * 2 * 1.21 = 60.4758
-    expect($this->item->totalWithVat())->toBe(60.4758);
-});
+    /** @test */
+    public function it_can_calculate_vat_percentage_as_decimal(): void
+    {
+        $this->assertEquals(1.21, $this->item->vatDecimal());
+    }
 
-it('can apply a coupon', function () {
-    $coupon = new Coupon(
-        id: 'test-coupon',
-        name: 'Test coupon',
-        value: 50,
-        type: CouponType::PERCENTAGE,
-    );
+    /** @test */
+    public function it_can_calculate_price_without_vat(): void
+    {
+        // 24.99 * 2 = 49.98
+        $this->assertEquals(49.98, $this->item->totalWithoutVat());
+    }
 
-    $this->item->applyCoupon($coupon);
+    /** @test */
+    public function it_can_calculate_price_with_vat(): void
+    {
+        // 24.99 * 2 * 1.21 = 60.4758
+        $this->assertEquals(60.4758, $this->item->totalWithVat());
+    }
 
-    expect($this->item->coupons)->toHaveCount(1);
+    /** @test */
+    public function it_can_apply_a_coupon(): void
+    {
+        $coupon = new Coupon(
+            id: 'test-coupon',
+            name: 'Test coupon',
+            value: 50,
+            type: CouponType::PERCENTAGE,
+        );
 
-    expect($this->item->coupons[0])->toBe($coupon);
-});
+        $this->item->applyCoupon($coupon);
 
-it('can calculate the total with vat and coupons', function () {
-    // 24.99 * 2 = 49.98
-    expect($this->item->total(withVat: false, withCoupons: false))->toBe(49.98);
+        $this->assertEquals($coupon, $this->item->coupons[$coupon->id]);
+    }
 
-    // 24.99 * 2 * 1.21 = 60.4758
-    expect($this->item->total(withVat: true, withCoupons: false))->toBe(60.4758);
+    /** @test */
+    public function can_calculate_the_total_with_vat_and_coupons(): void
+    {
+        // 24.99 * 2 = 49.98
+        $this->assertEquals(49.98, $this->item->total(withVat: false, withCoupons: false));
 
-    $percentageCoupon = new Coupon(
-        id: 'percentage-coupon',
-        name: 'Percentage coupon',
-        value: 50,
-        type: CouponType::PERCENTAGE,
-    );
+        // 24.99 * 2 * 1.21 = 60.4758
+        $this->assertEquals(60.4758, $this->item->total(withVat: true, withCoupons: false));
 
-    $this->item->applyCoupon($percentageCoupon);
+        $percentageCoupon = new Coupon(
+            id: 'percentage-coupon',
+            name: 'Percentage coupon',
+            value: 50,
+            type: CouponType::PERCENTAGE,
+        );
 
-    // 24.99 * 2 * 0.5 = 24.99
-    expect($this->item->total(withVat: false, withCoupons: true))->toBe(24.99);
+        $this->item->applyCoupon($percentageCoupon);
 
-    // (24.99 * 2 * 0.5) * 1.21 = 30.2379
-    expect($this->item->total(withVat: true, withCoupons: true))->toBe(30.2379);
+        // 24.99 * 2 * 0.5 = 24.99
+        $this->assertEquals(24.99, $this->item->total(withVat: false, withCoupons: true));
 
-    $fixedCoupon = new Coupon(
-        id: 'fixed-coupon',
-        name: 'Fixed coupon',
-        value: 10,
-        type: CouponType::FIXED,
-    );
+        // (24.99 * 2 * 0.5) * 1.21 = 30.2379
+        $this->assertEquals(30.2379, $this->item->total(withVat: true, withCoupons: true));
 
-    $this->item->applyCoupon($fixedCoupon);
+        $fixedCoupon = new Coupon(
+            id: 'fixed-coupon',
+            name: 'Fixed coupon',
+            value: 10,
+            type: CouponType::FIXED,
+        );
 
-    // (24.99 * 2 * 0.5) - 10 = 14.99
-    expect($this->item->total(withVat: false, withCoupons: true))->toBe(14.99);
+        $this->item->applyCoupon($fixedCoupon);
 
-    // ((24.99 * 2 * 0.5) - 10) * 1.21 = 18.1379
-    expect($this->item->total(withVat: true, withCoupons: true))->toBe(18.1379);
-});
+        // (24.99 * 2 * 0.5) - 10 = 14.99
+        $this->assertEquals(14.99, $this->item->total(withVat: false, withCoupons: true));
+
+        // ((24.99 * 2 * 0.5) - 10) * 1.21 = 18.1379
+        $this->assertEquals(18.1379, $this->item->total(withVat: true, withCoupons: true));
+    }
+}

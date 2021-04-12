@@ -73,7 +73,11 @@ class Item extends AbstractItem implements Contracts\Taxable
 
     public function applyCoupon(Coupon $coupon): self
     {
-        $this->coupons[] = $coupon;
+        if (in_array($coupon->id, $this->coupons)) {
+            return $this;
+        }
+
+        $this->coupons[$coupon->id] = $coupon;
 
         return $this;
     }
