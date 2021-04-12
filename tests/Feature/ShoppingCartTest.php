@@ -55,5 +55,15 @@ class ShoppingCartTest extends TestCase
 
         // with vat ((100 * 0.5 - 10) * 1.1) + ((50 * 0.5 - 10) * 1.1) + (50 * 1.1) = 115.5
         $this->assertEquals(115.5, cart()->total(withVat: true));
+
+        cart()->removeCoupon('50%-off');
+
+        cart()->removeCoupon('first-time-discount');
+
+        // without vat 100 + 50 + 50 = 200
+        $this->assertEquals(200, cart()->total(withVat: false));
+
+        // with vat (100 * 1.1) + (50 * 1.1) + (50 * 1.1) = 220
+        $this->assertEquals(220, cart()->total(withVat: true));
     }
 }
