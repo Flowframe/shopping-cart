@@ -2,7 +2,7 @@
 
 namespace Flowframe\ShoppingCart\Tests\Features;
 
-use Flowframe\ShoppingCart\ShoppingCart;
+use Flowframe\ShoppingCart\Facades\ShoppingCart;
 use Flowframe\ShoppingCart\Tests\TestCase;
 
 class ShoppingCartTest extends TestCase

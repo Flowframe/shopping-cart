@@ -3,6 +3,7 @@
 namespace Flowframe\ShoppingCart\Models;
 
 use Flowframe\ShoppingCart\Enums\CouponType;
+use Flowframe\ShoppingCart\Facades\ShoppingCart;
 
 class Item extends AbstractItem implements Contracts\Taxable
 {
@@ -13,7 +14,6 @@ class Item extends AbstractItem implements Contracts\Taxable
         public float $vat,
         public int $quantity = 1,
         public array $options = [],
-        public array $coupons = [],
     ) {
     }
 
@@ -38,26 +38,26 @@ class Item extends AbstractItem implements Contracts\Taxable
 
     public function vat(): float
     {
-        return $this->totalWithVat() - $this->totalWithoutVat();
+        return $this->subtotalWithVat() - $this->subtotalWithoutVat();
     }
 
-    public function totalWithVat(): float
+    public function subtotalWithVat(): float
     {
-        return $this->totalWithoutVat() * $this->vatDecimal();
+        return $this->subtotalWithoutVat() * $this->vatDecimal();
     }
 
-    public function totalWithoutVat(): float
+    public function subtotalWithoutVat(): float
     {
         return $this->price * $this->quantity;
     }
 
     public function total(bool $withVat = true, bool $withCoupons = true): float
     {
-        $totalWithoutVat = $this->totalWithoutVat();
+        $totalWithoutVat = $this->subtotalWithoutVat();
 
         if ($withCoupons) {
             /** @var Coupon $coupon */
-            foreach ($this->coupons as $coupon) {
+            foreach (ShoppingCart::coupons()->get()->toArray() as $coupon) {
                 $totalWithoutVat = match ($coupon->type) {
                     CouponType::PERCENTAGE => $totalWithoutVat * $coupon->valueDecimal(),
                     CouponType::FIXED => $totalWithoutVat - $coupon->value,
@@ -69,16 +69,5 @@ class Item extends AbstractItem implements Contracts\Taxable
         return $withVat
             ? $totalWithoutVat * $this->vatDecimal()
             : $totalWithoutVat;
-    }
-
-    public function applyCoupon(Coupon $coupon): self
-    {
-        if (array_key_exists($coupon->id, $this->coupons)) {
-            return $this;
-        }
-
-        $this->coupons[$coupon->id] = $coupon;
-
-        return $this;
     }
 }

@@ -3,8 +3,8 @@
 use Flowframe\ShoppingCart\ShoppingCart;
 
 if (! function_exists('cart')) {
-    function cart()
+    function cart(): ShoppingCart
     {
-        return new ShoppingCart;
+        return app()->get(ShoppingCart::class);
     }
 }

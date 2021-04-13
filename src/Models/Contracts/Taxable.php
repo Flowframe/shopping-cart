@@ -8,7 +8,7 @@ interface Taxable
 
     public function vatDecimal(): float;
 
-    public function totalWithVat(): float;
+    public function subtotalWithVat(): float;
 
-    public function totalWithoutVat(): float;
+    public function subtotalWithoutVat(): float;
 }

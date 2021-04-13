@@ -20,15 +20,15 @@ class Fee extends AbstractItem implements Contracts\Taxable
 
     public function vat(): float
     {
-        return $this->totalWithVat() - $this->totalWithoutVat();
+        return $this->subtotalWithVat() - $this->subtotalWithoutVat();
     }
 
-    public function totalWithVat(): float
+    public function subtotalWithVat(): float
     {
-        return $this->totalWithoutVat() * $this->vatDecimal();
+        return $this->subtotalWithoutVat() * $this->vatDecimal();
     }
 
-    public function totalWithoutVat(): float
+    public function subtotalWithoutVat(): float
     {
         return $this->price;
     }
@@ -36,7 +36,7 @@ class Fee extends AbstractItem implements Contracts\Taxable
     public function total(bool $withVat = true): float
     {
         return $withVat
-            ? $this->totalWithVat()
-            : $this->totalWithoutVat();
+            ? $this->subtotalWithVat()
+            : $this->subtotalWithoutVat();
     }
 }

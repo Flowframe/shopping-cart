@@ -34,15 +34,15 @@ class FeeTest extends TestCase
     }
 
     /** @test */
-    public function it_can_calculate_total_with_vat(): void
+    public function it_can_calculate_subtotal_with_vat(): void
     {
-        $this->assertEquals(6.05, $this->fee->totalWithVat());
+        $this->assertEquals(6.05, $this->fee->subtotalWithVat());
     }
 
     /** @test */
-    public function it_can_calculate_total_without_vat(): void
+    public function it_can_calculate_subtotal_without_vat(): void
     {
-        $this->assertEquals(5.00, $this->fee->totalWithoutVat());
+        $this->assertEquals(5.00, $this->fee->subtotalWithoutVat());
     }
 
     /** @test */

@@ -53,7 +53,10 @@
         "laravel": {
             "providers": [
                 "Flowframe\\ShoppingCart\\ShoppingCartServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "ShoppingCart": "Flowframe\\ShoppingCart\\Facades\\ShoppingCart"
+            }
         }
     },
     "minimum-stability": "dev",
