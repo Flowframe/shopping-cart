@@ -5,6 +5,13 @@ namespace Flowframe\ShoppingCart\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
+ * @method static \Flowframe\ShoppingCart\Managers\ItemManager items()
+ * @method static \Flowframe\ShoppingCart\Managers\FeeManager fees()
+ * @method static \Flowframe\ShoppingCart\Managers\CouponManager coupons()
+ * @method static float subtotal()
+ * @method static void empty()
+ * @method static float total()
+ * 
  * @see \Flowframe\ShoppingCart\ShoppingCart
  */
 class ShoppingCart extends Facade
