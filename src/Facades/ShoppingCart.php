@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static float subtotal(bool $withVat = true)
  * @method static void empty()
  * @method static float total(bool $withVat = true, bool $withFees = true, bool $withCoupons = true)
+ * @method static float vat(bool $withFees = true, bool $withCoupons = true)
  *
  * @see \Flowframe\ShoppingCart\ShoppingCart
  */

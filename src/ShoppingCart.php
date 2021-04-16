@@ -57,4 +57,22 @@ class ShoppingCart
 
         return $total;
     }
+
+    public function vat(
+        bool $withFees = true,
+        bool $withCoupons = true,
+    ): float {
+        $totalWithVat = $this->total(
+            withFees: $withFees,
+            withCoupons: $withCoupons,
+        );
+
+        $totalWithoutVat = $this->total(
+            withVat: false,
+            withFees: $withFees,
+            withCoupons: $withCoupons,
+        );
+
+        return $totalWithVat - $totalWithoutVat;
+    }
 }

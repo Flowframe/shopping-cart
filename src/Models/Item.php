@@ -31,6 +31,11 @@ class Item extends AbstractItem implements Contracts\Taxable
         return $this;
     }
 
+    public function priceWithVat(): float
+    {
+        return $this->price * $this->vatDecimal();
+    }
+
     public function vatDecimal(): float
     {
         return ($this->vat / 100) + 1;

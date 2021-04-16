@@ -71,4 +71,11 @@ class ItemTest extends TestCase
         // 24.99 * 2 * 1.21 = 60.4758
         $this->assertEquals(60.4758, $this->item->subtotalWithVat());
     }
+
+    /** @test */
+    public function it_can_calculate_price_with_vat(): void
+    {
+        // 24.99 * 1.21 = 30.2379
+        $this->assertEquals(30.2379, $this->item->priceWithVat());
+    }
 }

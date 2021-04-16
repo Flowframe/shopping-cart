@@ -67,4 +67,47 @@ class ShoppingCartTest extends TestCase
         // with vat (100 * 1.1) + (50 * 1.1) + (50 * 1.1) = 220
         $this->assertEquals(220, ShoppingCart::total(withVat: true));
     }
+
+    /** @test */
+    public function it_can_calculate_vat(): void
+    {
+        ShoppingCart::items()->add([
+            'id' => 1,
+            'name' => 'Shoes',
+            'price' => 100,
+            'vat' => 10,
+        ]);
+
+        $this->assertEquals(10, ShoppingCart::vat());
+
+        ShoppingCart::items()->add([
+            'id' => 2,
+            'name' => 'Jeans',
+            'price' => 50,
+            'vat' => 10,
+            'quantity' => 2,
+        ]);
+
+        $this->assertEquals(20, ShoppingCart::vat());
+
+        ShoppingCart::fees()->add([
+            'id' => 'shipping',
+            'name' => 'Global shipping',
+            'price' => 50,
+            'vat' => 10,
+        ]);
+
+        $this->assertEquals(25, ShoppingCart::vat());
+
+        ShoppingCart::coupons()->add([
+            'id' => '50%-off',
+            'name' => '50% off',
+            'value' => 50,
+            'type' => 'percentage',
+        ]);
+
+        // (100 / 2 * 0.1) + (50 * 2 / 2 * 0.1) + (50 * 0.1) = 15
+
+        $this->assertEquals(15, ShoppingCart::vat());
+    }
 }
